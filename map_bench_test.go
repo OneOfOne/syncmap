@@ -190,7 +190,7 @@ func BenchmarkLoadOrStoreBigStruct(b *testing.B) {
 	})
 }
 
-func BenchmarkLoadThenLoadOrStoreFnBigStruct(b *testing.B) {
+func BenchmarkLoadThenLoadOrStoreBigStruct(b *testing.B) {
 	benchMap(b, bench{
 		setup: func(b *testing.B, m mapInterface) {
 			if _, ok := m.(*DeepCopyMap); ok {
