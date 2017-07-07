@@ -190,6 +190,27 @@ func BenchmarkLoadOrStoreBigStruct(b *testing.B) {
 	})
 }
 
+func BenchmarkLoadThenLoadOrStoreFnBigStruct(b *testing.B) {
+	benchMap(b, bench{
+		setup: func(b *testing.B, m mapInterface) {
+			if _, ok := m.(*DeepCopyMap); ok {
+				b.Skip("DeepCopyMap has quadratic running time.")
+			}
+		},
+
+		perG: func(b *testing.B, pb *testing.PB, i int, m mapInterface) {
+			for ; pb.Next(); i++ {
+				id := i % 100
+				v, ok := m.Load(id)
+				if !ok {
+					v, _ = m.LoadOrStore(id, new(BigStruct))
+				}
+				atomic.AddUint64(&(v.(*BigStruct).x), 1)
+			}
+		},
+	})
+}
+
 func BenchmarkLoadOrStoreFnBigStruct(b *testing.B) {
 	fn := func() interface{} { return new(BigStruct) }
 	benchMap(b, bench{
